@@ -1,0 +1,15 @@
+-- CreateTable
+CREATE TABLE "Book" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "title" TEXT NOT NULL,
+    "author" TEXT NOT NULL,
+    "genre" TEXT NOT NULL
+);
+
+-- CreateTable
+CREATE TABLE "Vote" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "value" INTEGER NOT NULL,
+    "bookId" INTEGER NOT NULL,
+    CONSTRAINT "Vote_bookId_fkey" FOREIGN KEY ("bookId") REFERENCES "Book" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+);
