@@ -9,6 +9,10 @@ type Book = {
   year: number;
   averageRating: number;
   img: string;
+  voteCounts: {
+    stars: number;
+    count: number;
+  }[];
 };
 
 export default function HomePage() {
