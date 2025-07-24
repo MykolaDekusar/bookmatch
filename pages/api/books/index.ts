@@ -9,8 +9,9 @@ export default async function handler(
 ) {
   if (req.method === "GET") {
     const books = await prisma.book.findMany({
-      include: { votes: true }, // così possiamo calcolare le medie
+      include: { votes: true },
     });
+    console.log("📚 LIBRI:", books);
     res.status(200).json(books);
   } else if (req.method === "POST") {
     const { title, author, genre } = req.body;
