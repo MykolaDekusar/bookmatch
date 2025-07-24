@@ -1,15 +1,15 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, User } from "@prisma/client";
 import { compare } from "bcrypt";
-import type { SessionStrategy } from "next-auth";
+import type { AuthOptions, User as AdapterUser } from "next-auth";
 import { Session } from "next-auth";
 import { JWT } from "next-auth/jwt";
 
 const prisma = new PrismaClient();
 
-export const authOptions = {
+export const authOptions: AuthOptions = {
   adapter: PrismaAdapter(prisma),
   providers: [
     CredentialsProvider({
@@ -41,15 +41,24 @@ export const authOptions = {
     }),
   ],
   session: {
-    strategy: "jwt" as SessionStrategy,
+    strategy: "jwt",
   },
   pages: {
-    signIn: "/signin", // route custom login page
+    signIn: "/signin",
   },
   callbacks: {
-    async session({ session, token }: { session: Session; token: JWT }) {
-      session.user.id = token.id as string;
-      session.user.role = token.role as string;
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+        token.role = (user as any).role;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (session.user) {
+        session.user.id = token.id as string;
+        session.user.role = token.role as string;
+      }
       return session;
     },
   },

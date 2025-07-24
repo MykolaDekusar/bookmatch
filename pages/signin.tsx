@@ -12,9 +12,13 @@ export default function SignIn() {
       email,
       password,
       redirect: false,
+      callbackUrl: "/admin",
     });
 
+    console.log(res);
+
     if (res?.ok) {
+      console.log(res);
       window.location.href = "/admin";
     } else {
       alert("Login fallito: controlla email o password");
