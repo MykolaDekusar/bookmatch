@@ -1,4 +1,6 @@
 import StarRating from "./StarRating";
+import VoteChart from "./VoteChart";
+
 type Props = {
   id: number;
   title: string;
@@ -8,6 +10,7 @@ type Props = {
   averageRating: number;
   img: string;
   onVote: (bookId: number, newAverage: number) => void;
+  voteCounts: { stars: number; count: number }[];
 };
 
 export default function BookCard({
@@ -18,6 +21,7 @@ export default function BookCard({
   year,
   averageRating,
   img,
+  voteCounts,
   onVote,
 }: Props) {
   return (
@@ -34,6 +38,7 @@ export default function BookCard({
       <p className="text-sm text-yellow-500">
         Media: {(averageRating ?? 0).toFixed(1)} ★
       </p>
+      <VoteChart data={voteCounts} />
       <StarRating bookId={id} onRated={(newAvg) => onVote(id, newAvg)} />
     </div>
   );
