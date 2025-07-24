@@ -1,28 +1,32 @@
-import { NextApiRequest, NextApiResponse } from "next";
-import { prisma } from "@/lib/prisma"; // assicurati che questo path sia corretto
+import type { NextApiRequest, NextApiResponse } from "next";
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
-  }
+  if (req.method === "POST") {
+    const { value, bookId } = req.body;
 
-  const { bookId, value } = req.body;
+    if (!value || !bookId) {
+      return res.status(400).json({ error: "Missing value or bookId" });
+    }
 
-  if (!bookId || value < 1 || value > 5) {
-    return res.status(400).json({ error: "Dati non validi" });
-  }
-
-  try {
-    const vote = await prisma.vote.create({
-      data: { bookId: Number(bookId), value: Number(value) },
+    await prisma.vote.create({
+      data: { value, bookId },
     });
 
-    return res.status(201).json({ message: "Voto registrato", vote });
-  } catch (error) {
-    console.error("Errore durante il salvataggio del voto:", error);
-    return res.status(500).json({ error: "Errore interno del server" });
+    const votes = await prisma.vote.findMany({
+      where: { bookId },
+    });
+
+    const total = votes.reduce((acc, v) => acc + v.value, 0);
+    const newAverage = votes.length ? total / votes.length : 0;
+
+    res.status(200).json({ success: true, newAverage });
+  } else {
+    res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 }

@@ -11,8 +11,24 @@ export default async function handler(
     const books = await prisma.book.findMany({
       include: { votes: true },
     });
-    console.log("📚 LIBRI:", books);
-    res.status(200).json(books);
+
+    const booksWithRating = books.map((book) => {
+      const total = book.votes.reduce((acc, vote) => acc + vote.value, 0);
+      const averageRating = book.votes.length
+        ? total / book.votes.length
+        : null;
+      const voteCounts = [1, 2, 3, 4, 5].map((value) => ({
+        stars: value,
+        count: book.votes.filter((v) => v.value === value).length,
+      }));
+      return {
+        ...book,
+        averageRating,
+        voteCounts,
+      };
+    });
+
+    res.status(200).json(booksWithRating);
   } else if (req.method === "POST") {
     const { title, author, genre } = req.body;
 

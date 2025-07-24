@@ -1,5 +1,4 @@
 import StarRating from "./StarRating";
-
 type Props = {
   id: number;
   title: string;
@@ -8,6 +7,7 @@ type Props = {
   year: number;
   averageRating: number;
   img: string;
+  onVote: (bookId: number, newAverage: number) => void;
 };
 
 export default function BookCard({
@@ -18,6 +18,7 @@ export default function BookCard({
   year,
   averageRating,
   img,
+  onVote,
 }: Props) {
   return (
     <div className="w-full max-w-sm rounded-2xl shadow-md border p-4 bg-white">
@@ -33,7 +34,7 @@ export default function BookCard({
       <p className="text-sm text-yellow-500">
         Media: {(averageRating ?? 0).toFixed(1)} ★
       </p>
-      <StarRating bookId={id} onRated={() => location.reload()} />
+      <StarRating bookId={id} onRated={(newAvg) => onVote(id, newAvg)} />
     </div>
   );
 }

@@ -63,7 +63,21 @@ export default function HomePage() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                   {books.length > 0 ? (
-                    books.map((book) => <BookCard key={book.id} {...book} />)
+                    books.map((book) => (
+                      <BookCard
+                        key={book.id}
+                        {...book}
+                        onVote={(bookId, newAverage) => {
+                          setBooks((prevBooks) =>
+                            prevBooks.map((b) =>
+                              b.id === bookId
+                                ? { ...b, averageRating: newAverage }
+                                : b
+                            )
+                          );
+                        }}
+                      />
+                    ))
                   ) : (
                     <p className="text-gray-500">Caricamento libri...</p>
                   )}
