@@ -14,44 +14,46 @@ datasource db {
 }
 
 model Book {
-  id       Int    @id @default(autoincrement())
-  title    String
-  author   String
-  genre    String
-  votes    Vote[]
+  id     Int    @id @default(autoincrement())
+  title  String
+  author String
+  genre  String
+  votes  Vote[]
 }
 
 model Vote {
-  id     Int   @id @default(autoincrement())
+  id     Int  @id @default(autoincrement())
   value  Int
-  book   Book  @relation(fields: [bookId], references: [id])
+  book   Book @relation(fields: [bookId], references: [id])
   bookId Int
 }
 
 model User {
   id            Int       @id @default(autoincrement())
+  name          String?
   email         String    @unique
+  emailVerified DateTime?
   password      String
-  role          String    @default("user") // può essere anche "admin"
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  accounts      Account[]
-  sessions      Session[]
+  role          String    @default("user")
+  image         String?
+
+  accounts Account[]
+  sessions Session[]
 }
 
 model Account {
-  id                 Int       @id @default(autoincrement())
-  userId             Int
-  type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String?   
-  access_token       String?   
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String?   
-  session_state      String?
+  id                Int     @id @default(autoincrement())
+  userId            Int
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
 
   user User @relation(fields: [userId], references: [id])
 
@@ -59,8 +61,8 @@ model Account {
 }
 
 model Session {
-  id           Int       @id @default(autoincrement())
-  sessionToken String    @unique
+  id           Int      @id @default(autoincrement())
+  sessionToken String   @unique
   userId       Int
   expires      DateTime
 
